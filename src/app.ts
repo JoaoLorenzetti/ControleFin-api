@@ -4,6 +4,7 @@ import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsdoc from 'swagger-jsdoc'
 import { errorHandler } from './middlewares/errorHandler.middleware'
+import authRoutes from './routes/auth.routes'
 
 const app = express()
 
@@ -34,7 +35,7 @@ app.get('/health', (req, res) => {
 })
 
 // Rotas — serão adicionadas nos próximos commits
-// app.use('/api/v1/auth', authRoutes)
+app.use('/api/v1/auth', authRoutes)
 // app.use('/api/v1/perfil', perfilRoutes)
 // app.use('/api/v1/envelopes', envelopeRoutes)
 
