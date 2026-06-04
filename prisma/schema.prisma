@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Usuário do app
+model User {
+  id           String   @id @default(uuid())
+  nome         String
+  email        String   @unique
+  senha        String
+  criadoEm    DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  perfil       Perfil?
+  envelopes    Envelope[]
+  transacoes   Transacao[]
+
+  @@map("usuarios")
+}
+
+// Perfil financeiro criado no onboarding
+model Perfil {
+  id          String   @id @default(uuid())
+  renda       Decimal  @db.Decimal(18, 2)
+  ciclo       String   @default("mensal")
+  gastosFixos Decimal  @default(0) @db.Decimal(18, 2)
+  meta        String
+  criadoEm   DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  usuarioId   String   @unique
+  usuario     User     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("perfis")
+}
+
+// Envelope de categoria (ex: Mercado, Lazer)
+model Envelope {
+  id         String   @id @default(uuid())
+  categoria  String
+  emoji      String
+  nome       String
+  cor        String
+  orcamento  Decimal  @db.Decimal(18, 2)
+  gasto      Decimal  @default(0) @db.Decimal(18, 2)
+  mes        Int      // mês de referência (1-12)
+  ano        Int      // ano de referência
+  criadoEm  DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  usuarioId  String
+  usuario    User     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  transacoes Transacao[]
+
+  @@unique([usuarioId, categoria, mes, ano])
+  @@map("envelopes")
+}
+
+// Transação de gasto
+model Transacao {
+  id          String   @id @default(uuid())
+  valor       Decimal  @db.Decimal(18, 2)
+  descricao   String?
+  criadoEm  DateTime @default(now())
+
+  usuarioId   String
+  usuario     User     @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  envelopeId  String
+  envelope    Envelope @relation(fields: [envelopeId], references: [id], onDelete: Cascade)
+
+  @@map("transacoes")
+}
