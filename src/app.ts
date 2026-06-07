@@ -5,6 +5,10 @@ import swaggerUi from 'swagger-ui-express'
 import swaggerJsdoc from 'swagger-jsdoc'
 import { errorHandler } from './middlewares/errorHandler.middleware'
 import authRoutes from './routes/auth.routes'
+import envelopeRoutes from './routes/envelope.routes'
+import transacaoRoutes from './routes/transacao.routes'
+import dashboardRoutes from './routes/dashboard.routes'
+
 
 const app = express()
 
@@ -37,7 +41,9 @@ app.get('/health', (req, res) => {
 // Rotas — serão adicionadas nos próximos commits
 app.use('/api/v1/auth', authRoutes)
 // app.use('/api/v1/perfil', perfilRoutes)
-// app.use('/api/v1/envelopes', envelopeRoutes)
+app.use('/api/v1/envelopes', envelopeRoutes)
+app.use('/api/v1/transacoes', transacaoRoutes)
+app.use('/api/v1/dashboard', dashboardRoutes)
 
 // Handler de rota não encontrada
 app.use((req, res) => {
